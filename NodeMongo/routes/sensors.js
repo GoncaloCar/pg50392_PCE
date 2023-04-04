@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 var axios = require('axios');
 let sensorController = require("../controller/sensor");
+let SensorSchema = require("../model/sensor")
 const { route } = require(".");
 const mongoose = require('mongoose')
 
@@ -29,24 +30,25 @@ router.get("/acedehpeixoto/:id", (req, res) => {
         res.json(err);
     })
 })
-router.get("/list", (req, res) => {
-    mongoose.connect('mongodb://localhost:9000/leituras');
 
-    SensorModel.find((err, sensors) => {
-        if (err) {
-            res.json(err);
-        } else {
-            res.json(sensors);
-        }
-    });
-
-    mongoose.connection.close();
-})
 
 router.get("/id", (req, res) => {
     mongoose.connect('mongodb://localhost:9000/leituras');
 
-    SensorModel.find({sensor_id: req.params.id}, (err, sensors) => {
+    SensorSchema.find({sensorid: req.params.id}, (err, sensors) => {
+        if (err) {
+            res.json(err);
+        } else {
+            res.json(sensors);
+        }
+    });
+
+    mongoose.connection.close();
+})
+router.get("/list", (req, res) => {
+    mongoose.connect('mongodb://localhost:9000/leituras');
+
+    SensorSchema.find((err, sensors) => {
         if (err) {
             res.json(err);
         } else {
@@ -57,7 +59,36 @@ router.get("/id", (req, res) => {
     mongoose.connection.close();
 })
 
-module.exports = router;
+
+router.put("/update", async(req, res) => {
+	const {sensorid, sensornum, type_of_sensor} = req.body;
+    let updateSensorResponse = await sensorController.updateSensor(sensorid, sensornum, type_of_sensor)
+    if (updateSensorResponse.success) {
+        res.status(200).json({info: "Sensor atualizado com sucesso"})
+    }
+    else{
+        res.status(200).json({info: "Sensor não foi atualizado",
+        sensorid:sensorid,
+        sensornum:sensornum,
+        type_of_sensor : type_of_sensor
+        })
+    }
+});
+
+router.delete("/remove", async(req, res) =>{
+    const {sensorid} = req.body;
+    let deleteSensorResponse = await sensorController.removeSensor(sensorid)
+    if (deleteSensorResponse.success){
+        res.status(200).json({info: "Sensor eliminado com sucesso"})
+    }
+    else{
+        res.status(200).json({info: "Erro na remoção"})
+    }
+})
+
+
+
+
 
 
 module.exports = router;

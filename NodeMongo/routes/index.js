@@ -13,7 +13,7 @@ router.get("/", (req, res) => {
   })
 })
 
-router.get("/acedehpeixoto/:id", (req, res) => {
+router.get("/acedehpeixoto/id", (req, res) => {
     axios.get(
         'http://nosql.hpeixoto.me/api/sensor/' + req.params.id
     )
@@ -22,40 +22,53 @@ router.get("/acedehpeixoto/:id", (req, res) => {
         //const sensorid1 = response.data.sensorid;
         let newSensorResponse = await sensorController.newSensor(sensorid, sensornum, type_of_sensor);
         if(newSensorResponse.success) {
-            res.status(200).json({info: "Novo sensor adicionado"});
+            response_sensor ="Novo sensor adicionado"
         } else{
-            res.status(200).json({info: "Erro ao adicionar novo sensor"});
+            response_sensor = "Erro ao adicionar novo sensor"
         }
         const{caretakerid, name} = response.data;
         let newCaretakerResponse = await caretakerController.newCaretaker(caretakerid, name);
         if(newCaretakerResponse.success){
-          res.status(200).json({info: "Novo caretaker adicionado"});
+          response_caretaker =  "Novo caretaker adicionado"
         } else{
-          res.status(200).json({info: "Erro ao adicionar novo caretak"});
+          response_caretaker = "Erro ao adicionar novo caretak"
         }
         const{patientid, patientname, patientbirthdate, patientage} = response.data;
         let newPatientResponse = await patientController.newPatient(patientid, patientname, patientbirthdate, patientage);
         if(newPatientResponse.sucess){
-          res.status(200).json({info: "Novo paciente adicionado"});
+          response_patient = "Novo paciente adicionado"
         }
         else{
-          res.status(200).json({info: "Erro ao adicionar novo paciente"});
+          response_patient = "Erro ao adicionar novo paciente"
         }
         const{servicecod, servicedesc} = response.data;
         let newServiceResponse = await serviceController.newService(servicecod, servicedesc);
         if(newServiceResponse.success){
-          res.status(200).json({info: "Novo serviço adicionado"})
+          response_service = "Novo serviço adicionado"
         }else{
-          res.status(200).json({info: "Erro ao adicionar novo serviço"})
+          response_service = "Erro ao adicionar novo serviço"
         }
-       res.json(response.data);
        const{clinicalinfoID, admDate, bed, bodyTemp, bpm, sato2, bloodpress, timestamp} = response.data();
        let newClinicalinfoResponse = await clinicalinfoController.newClinicalInfo(clinicalinfoID, admDate, bed, bodyTemp, bpm, sato2, bloodpress.systolic, bloodpress.diastolic, timestamp);
        if(newClinicalinfoResponse.success){
-        res.status(200).json({info: "Nova informação adicionada"})
+        response_clinicalinfo = "Nova informação adicionada"
        }else{
-        res.status(200).json({info: "Erro ao adicionar informação"})
+        response_clinicalinfo =  "Erro ao adicionar informação"
        }
+       res.json({
+        "Sensor" : response_sensor,
+        "Paciente" : response_patient,
+        "Caretaker" : response_caretaker,
+        "Servico" : response_service,
+        "Informacao" : response_clinicalinfo
+      })
+    })
+    .catch(err => {
+      console.log(err)
+      res.json(err);
     })
 })
+
+
+
 module.exports = router;
