@@ -31,22 +31,7 @@ router.get("/acedehpeixoto/:id", (req, res) => {
     })
 })
 
-
-router.get("/id", (req, res) => {
-    mongoose.connect('mongodb://localhost:9000/leituras');
-
-    SensorSchema.find({sensorid: req.params.id}, (err, sensors) => {
-        if (err) {
-            res.json(err);
-        } else {
-            res.json(sensors);
-        }
-    });
-
-    mongoose.connection.close();
-})
 router.get("/list", (req, res) => {
-    mongoose.connect('mongodb://localhost:9000/leituras');
 
     SensorSchema.find((err, sensors) => {
         if (err) {
@@ -56,7 +41,17 @@ router.get("/list", (req, res) => {
         }
     });
 
-    mongoose.connection.close();
+})
+
+router.get("/list/:id", (req, res) => {
+
+    SensorSchema.find({sensorid: req.params.id}, (err, sensors) => {
+        if (err) {
+            res.json(err);
+        } else {
+            res.json(sensors);
+        }
+    });
 })
 
 
@@ -75,7 +70,7 @@ router.put("/update", async(req, res) => {
     }
 });
 
-router.delete("/remove", async(req, res) =>{
+router.delete("/remove/:id", async(req, res) =>{
     const {sensorid} = req.body;
     let deleteSensorResponse = await sensorController.removeSensor(sensorid)
     if (deleteSensorResponse.success){
@@ -85,9 +80,26 @@ router.delete("/remove", async(req, res) =>{
         res.status(200).json({info: "Erro na remoção"})
     }
 })
+router.get("/:id", (req, res) => {
+    SensorModel.find({sensor_id: req.params.id}, (err, sensors) => {
+        if (err) {
+            res.json(err);
+        } else {
+            res.json(sensors);
+        }
+    });
+})
 
 
-
+router.post("/new", async (req, res) => {
+    const {sensorid, sensornum, type_of_sensor} = req.body;
+    let newSensorResponse = await sensorController.newSensor(sensorid, sensornum, type_of_sensor);
+    if (newSensorResponse.success) {
+        res.status(200).json({success: true, info: "Sensor adicionado com sucesso!"});
+    } else {
+        res.status(200).json({success: false, info: "Erro ao adicionar sensor!"});
+    };
+})
 
 
 

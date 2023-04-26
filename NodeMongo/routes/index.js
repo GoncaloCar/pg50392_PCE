@@ -13,12 +13,13 @@ router.get("/", (req, res) => {
   })
 })
 
-router.get("/acedehpeixoto/id", (req, res) => {
+router.get("/acedehpeixoto/:id", (req, res) => {
     axios.get(
         'http://nosql.hpeixoto.me/api/sensor/' + req.params.id
     )
     .then(async response => {
         const {sensorid, sensornum, type_of_sensor} = response.data;
+        var response_sensor;
         //const sensorid1 = response.data.sensorid;
         let newSensorResponse = await sensorController.newSensor(sensorid, sensornum, type_of_sensor);
         if(newSensorResponse.success) {
@@ -27,6 +28,7 @@ router.get("/acedehpeixoto/id", (req, res) => {
             response_sensor = "Erro ao adicionar novo sensor"
         }
         const{caretakerid, name} = response.data;
+        var response_caretaker;
         let newCaretakerResponse = await caretakerController.newCaretaker(caretakerid, name);
         if(newCaretakerResponse.success){
           response_caretaker =  "Novo caretaker adicionado"
@@ -34,6 +36,7 @@ router.get("/acedehpeixoto/id", (req, res) => {
           response_caretaker = "Erro ao adicionar novo caretak"
         }
         const{patientid, patientname, patientbirthdate, patientage} = response.data;
+        var response_patient;
         let newPatientResponse = await patientController.newPatient(patientid, patientname, patientbirthdate, patientage);
         if(newPatientResponse.sucess){
           response_patient = "Novo paciente adicionado"
@@ -42,6 +45,7 @@ router.get("/acedehpeixoto/id", (req, res) => {
           response_patient = "Erro ao adicionar novo paciente"
         }
         const{servicecod, servicedesc} = response.data;
+        var response_service;
         let newServiceResponse = await serviceController.newService(servicecod, servicedesc);
         if(newServiceResponse.success){
           response_service = "Novo serviço adicionado"
@@ -49,6 +53,7 @@ router.get("/acedehpeixoto/id", (req, res) => {
           response_service = "Erro ao adicionar novo serviço"
         }
        const{clinicalinfoID, admDate, bed, bodyTemp, bpm, sato2, bloodpress, timestamp} = response.data();
+       var response_clinicalinfo;
        let newClinicalinfoResponse = await clinicalinfoController.newClinicalInfo(clinicalinfoID, admDate, bed, bodyTemp, bpm, sato2, bloodpress.systolic, bloodpress.diastolic, timestamp);
        if(newClinicalinfoResponse.success){
         response_clinicalinfo = "Nova informação adicionada"
